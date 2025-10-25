@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رفع الملفات</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background-color: #fbfafa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 0px;
+        }
+
+        .container {
+            width: 200%;
+            max-width: 900px;
+        }
+
+        .upload-box {
+            background: rgb(164, 222, 235);
+            border: 3px solid #55646b;
+            border-radius: 16px;
+            padding: 80px 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .upload-box:hover {
+            border-color: #38bdf8;
+            background-color: #f0f9ff;
+        }
+
+        .upload-box.dragover {
+            border-color: #0284c7;
+            background-color: #e0f2fe;
+        }
+
+        .upload-label {
+            display: inline-block;
+            background-color: #cff7fa;
+            color: #86d0de;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-size: 16px;
+            border: 2px solid #0c4a6e;
+            font-weight: 500;
+            width: 200px;
+            border-radius: 16px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .options-menu {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .option1, .option2, .option3 {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 16px;
+            color: #85d4f6;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            padding: 8px 12px;
+            border-radius: 6px;
+            .option1{
+                   width: 17px;
+                    height: 26px;
+                    flex-shrink: 0;
+                    border-radius: 3px;
+                    background: #edbac3;
+            }
+        }
+
+        .option1:hover, .option2:hover, .option3:hover {
+            color: #232323;
+            background-color: #89defc;
+            border: 2px solid #d4d4d4;
+        }
+
+        .option.active {
+            color: #6bc7ef;
+            font-weight: 500;
+        }
+
+        .option-icon {
+            font-size: 20px;
+        }
+
+        .success-message {
+            text-align: center;
+            color: #059669;
+            margin-top: 15px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .file-name {
+            margin-top: 15px;
+            color: #0284c7;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="upload-box" id="uploadBox">
+            <div class="upload-label">Upload your file</div>
+            <div class="file-name" id="fileName"></div>
+            <input type="file" class="file-input" id="fileInput" accept=".pdf,.doc,.docx,.txt">
+        </div>
+
+        <div class="options-menu">
+            <div class="option1 " data-option="flashcards">
+                <span class="option-icon"></span>
+                flashcards
+            </div>
+            <div class="option2" data-option="test">
+                <span class="option-icon">☐</span>
+                test
+            </div>
+            <div class="option3" data-option="summary">
+                <span class="option-icon">📄</span>
+                summary
+            </div>
+        </div>
+
+        <div class="success-message" id="successMessage">تم رفع الملف بنجاح!</div>
+    </div>
+
+    <script>
+        const uploadBox = document.getElementById('uploadBox');
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+        const successMessage = document.getElementById('successMessage');
+        const options = document.querySelectorAll('.option');
+
+        // النقر على صندوق الرفع
+        uploadBox.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // عند اختيار ملف
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                fileName.textContent = `الملف: ${file.name}`;
+                successMessage.style.display = 'block';
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 3000);
+            }
+        });
+
+        // السحب والإفلات
+        uploadBox.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadBox.classList.add('dragover');
+        });
+
+        uploadBox.addEventListener('dragleave', () => {
+            uploadBox.classList.remove('dragover');
+        });
+
+        uploadBox.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadBox.classList.remove('dragover');
+            
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                fileInput.files = e.dataTransfer.files;
+                fileName.textContent = `الملف: ${file.name}`;
+                successMessage.style.display = 'block';
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 3000);
+            }
+        });
+
+        // التبديل بين الخيارات
+        options.forEach(option => {
+            option.addEventListener('click', () => {
+                options.forEach(opt => opt.classList.remove('active'));
+                option.classList.add('active');
+            });
+        });
+    </script>
+
+</body>
+</html>
